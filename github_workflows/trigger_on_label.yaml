@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  issues:
+    types: [ labeled ]
+
+env:
+  LABEL_NAME: help wanted
+
+jobs:
+  build:
+    if: ${{ github.event.label.name }} == $LABEL_NAME
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+        
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+        #cache: 'pip'
+
+    - name: Install python dependencies
+      run: pip install loguru omegaconf openai
+
+#     # apparently we need this to properly format the json...
+#     - name: Install jq
+#       run: sudo apt-get update && sudo apt-get install -y jq
+
+    - name: Do the thing
+      run: | 
+        echo "Issue number: ${{ github.event.issue.number }}"
+        echo $DEBUG_PAYLOAD
+        echo "do the thing"
+        python do_the_thing.py "${ISSUE_PAYLOAD}"
+      env:
+        DEBUG_PAYLOAD: ${{ toJson(github.event) }}
+        LABEL_PAYLOAD: ${{ toJson(github.event.label) }}
+      #  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        commit-message: LLM auto-completed.
+        branch: llm/issue-${{ github.event.issue.number }}
