@@ -45,7 +45,28 @@ def generate_code_completion(
         ], **kargs)
     return completions.choices[0]['message']['content'].strip()
 
+
+  def predict_completion(prompt):
+    """
+    guess tags for document
+    """
+    response = openai.Completion.create(
+        model='gpt-3.5-turbo',
+        prompt=prompt,
+    )
+    return response['choices'][0]['message']['content']
+
   
+def predict_chat_completion(prompt):
+    """
+    guess tags for document
+    """
+    response = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=prompt,
+    )
+    return response['choices'][0]['message']['content']
+
 
 def process_file(
     file_path: str,
