@@ -3,7 +3,22 @@ import openai
 from omegaconf import OmegaConf
 from pathlib import Path
 
-CONFIG_FILE="config.yaml"
+
+def chatgpt(func):
+    """
+    Crumb's decorator
+    """
+    # via https://twitter.com/aicrumb/status/1632490207839756290/
+    def wrapper(message):
+        prompt = "don't acknowledge me or my request, just provide the directed response only."
+        completion = openai.Completion.create(
+            model="gpt-3.5-turbo",
+            messages=[{'role': 'user', 'text': prompt}],
+        )
+        return completion.choices[0]['message']['content'].strip()
+    return wrapper
+
+
 
 DEFAULT_SYSTEM_PROMPT = (
     "You are an experienced staff software engineer who writes perfect code. "
