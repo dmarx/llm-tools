@@ -39,7 +39,7 @@ DEFAULT_USER_TEMPLATE = (
     "your response should be only the raw text content of the completed document (i.e. please do not add markdown code formatting). "
 )
 
-def generate_code_completion(
+def generate(
     prompt: str,
     **kargs
 ) -> str:
